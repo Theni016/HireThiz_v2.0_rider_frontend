@@ -50,16 +50,7 @@ const DriverEditTrip = () => {
 
         const formattedTrips = response.data.map((trip: any) => ({
           ...trip,
-          startLocation:
-            typeof trip.startLocation === "string"
-              ? JSON.parse(trip.startLocation)
-              : trip.startLocation,
-          destination:
-            typeof trip.destination === "string"
-              ? JSON.parse(trip.destination)
-              : trip.destination,
         }));
-
         setTrips(formattedTrips);
       } catch (error) {
         console.error("Fetch trips error:", error);

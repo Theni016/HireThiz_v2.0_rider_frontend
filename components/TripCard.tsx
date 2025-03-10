@@ -27,18 +27,48 @@ interface TripCardProps {
 }
 
 const TripCard: React.FC<TripCardProps> = ({ trip }) => {
+  const extractDistrict = (address: string): string => {
+    if (!address) return "";
+
+    const parts = address.split(",").map((part) => part.trim());
+
+    if (parts.length >= 3) {
+      return parts[parts.length - 2];
+    }
+    if (parts.length >= 2) {
+      return parts[1];
+    }
+    return parts[0];
+  };
+
+  const startDistrict = extractDistrict(trip.startLocation.address);
+  const destinationDistrict = extractDistrict(trip.destination.address);
+
+  const formatDate = (dateString: string): string => {
+    if (!dateString) return "";
+
+    const date = new Date(dateString);
+
+    const options: Intl.DateTimeFormatOptions = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+
+    return date.toLocaleDateString(undefined, options);
+  };
+
+  const formattedDate = formatDate(trip.date);
+
   return (
     <View style={styles.card}>
       <Text style={styles.tripTitle}>
-        {trip.startLocation.address.split(",")[0]},{" "}
-        {trip.startLocation.address.split(",")[1]} →
-        {trip.destination.address.split(",")[0]},{" "}
-        {trip.destination.address.split(",")[1]}
+        {startDistrict} → {destinationDistrict}
       </Text>
       <Text style={styles.details}>
         Seats: {trip.seatsAvailable} | Price: Rs. {trip.pricePerSeat}
       </Text>
-      <Text style={styles.details}>Date: {trip.date}</Text>
+      <Text style={styles.details}>Date: {formattedDate}</Text>
       <Text style={styles.description}>{trip.description}</Text>
       <Text style={styles.driver}>
         Driver: {trip.driverName} | Vehicle: {trip.vehicle} | ⭐ {trip.rating}
