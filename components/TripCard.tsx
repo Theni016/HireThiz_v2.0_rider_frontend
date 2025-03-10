@@ -3,8 +3,16 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 
 type Trip = {
   id: number;
-  startLocation: string;
-  destination: string;
+  startLocation: {
+    latitude: number;
+    longitude: number;
+    address: string;
+  };
+  destination: {
+    latitude: number;
+    longitude: number;
+    address: string;
+  };
   seatsAvailable: number;
   pricePerSeat: number;
   date: string;
@@ -22,7 +30,10 @@ const TripCard: React.FC<TripCardProps> = ({ trip }) => {
   return (
     <View style={styles.card}>
       <Text style={styles.tripTitle}>
-        {trip.startLocation} → {trip.destination}
+        {trip.startLocation.address.split(",")[0]},{" "}
+        {trip.startLocation.address.split(",")[1]} →
+        {trip.destination.address.split(",")[0]},{" "}
+        {trip.destination.address.split(",")[1]}
       </Text>
       <Text style={styles.details}>
         Seats: {trip.seatsAvailable} | Price: Rs. {trip.pricePerSeat}

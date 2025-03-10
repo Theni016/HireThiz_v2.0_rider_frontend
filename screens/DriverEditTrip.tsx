@@ -4,10 +4,16 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import TripCard from "@/components/TripCard";
 
+type Location = {
+  latitude: number;
+  longitude: number;
+  address: string;
+};
+
 type Trip = {
   id: number;
-  startLocation: string;
-  destination: string;
+  startLocation: Location;
+  destination: Location;
   seatsAvailable: number;
   pricePerSeat: number;
   date: string;
@@ -34,7 +40,7 @@ const DriverEditTrip = () => {
         const driverId = tokenPayload.id;
 
         const response = await axios.get(
-          `http://192.168.1.2:5000/api/trips/driver/${driverId}`,
+          `http://192.168.8.140:5000/api/trips/driver/${driverId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -42,7 +48,19 @@ const DriverEditTrip = () => {
           }
         );
 
-        setTrips(response.data);
+        const formattedTrips = response.data.map((trip: any) => ({
+          ...trip,
+          startLocation:
+            typeof trip.startLocation === "string"
+              ? JSON.parse(trip.startLocation)
+              : trip.startLocation,
+          destination:
+            typeof trip.destination === "string"
+              ? JSON.parse(trip.destination)
+              : trip.destination,
+        }));
+
+        setTrips(formattedTrips);
       } catch (error) {
         console.error("Fetch trips error:", error);
         Alert.alert("Error", "Failed to load trips");

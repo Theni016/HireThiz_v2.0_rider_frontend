@@ -33,7 +33,7 @@ const ThizzyScreen = () => {
 
     try {
       const response = await axios.post(
-        "http://192.168.1.2:5005/webhooks/rest/webhook",
+        "http://192.168.8.140:5005/webhooks/rest/webhook",
         {
           sender: "user",
           message: input,
