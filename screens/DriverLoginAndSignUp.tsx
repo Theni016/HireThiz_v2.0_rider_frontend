@@ -2,10 +2,14 @@ import React, { useState } from "react";
 import {
   View,
   Text,
+  Image,
   TextInput,
   TouchableOpacity,
   StyleSheet,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -13,6 +17,8 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import SuccessPopup from "@/components/SuccessPopup";
 import { RootStackParamList } from "../screens/types";
+import { LinearGradient } from "expo-linear-gradient";
+import unsuccess from "../assets/images/unsuccess.png";
 
 // Define the type for useNavigation
 type DriverLoginNavProp = NativeStackNavigationProp<
@@ -29,6 +35,8 @@ const DriverLoginAndSignUp = () => {
   const [username, setUsername] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [successPopupVisible, setSuccessPopupVisible] = useState(false);
+  const [errorPopupVisible, setErrorPopupVisible] = useState(false);
+
   const navigation = useNavigation<DriverLoginNavProp>();
 
   const handleSignUp = async () => {
@@ -49,8 +57,7 @@ const DriverLoginAndSignUp = () => {
       );
       setSuccessPopupVisible(true);
     } catch (error: any) {
-      console.error("Sign-up error:", error.response?.data || error.message);
-      Alert.alert("Error", error.response?.data?.message || "Sign-up failed");
+      setErrorPopupVisible(true);
     }
   };
 
@@ -83,85 +90,122 @@ const DriverLoginAndSignUp = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>
-        {isLogin ? "Driver Login" : "Driver Sign Up"}
-      </Text>
-
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-      />
-
-      {!isLogin && (
-        <TextInput
-          style={styles.input}
-          placeholder="User Name"
-          value={username}
-          onChangeText={setUsername}
-        />
-      )}
-
-      {!isLogin && (
-        <TextInput
-          style={styles.input}
-          placeholder="Vehicle Model"
-          value={vehicle}
-          onChangeText={setVehicle}
-        />
-      )}
-      {!isLogin && (
-        <TextInput
-          style={styles.input}
-          placeholder="Mobile Number"
-          value={phoneNumber}
-          onChangeText={setPhoneNumber}
-        />
-      )}
-
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-
-      {!isLogin && (
-        <TextInput
-          style={styles.input}
-          placeholder="Confirm Password"
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-          secureTextEntry
-        />
-      )}
-
-      {/* Navigate to DriverMenu on button click */}
-      <TouchableOpacity
-        style={styles.button}
-        onPress={isLogin ? handleLogin : handleSignUp}
+    <LinearGradient colors={["#000428", "#004e92"]} style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        style={styles.innerContainer}
       >
-        <Text style={styles.buttonText}>{isLogin ? "Login" : "Sign Up"}</Text>
-      </TouchableOpacity>
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <Image
+            source={require("../assets/images/dark_bg_rider.png")}
+            style={styles.logo}
+            resizeMode="contain"
+          />
 
-      <TouchableOpacity onPress={() => setIsLogin(!isLogin)}>
-        <Text style={styles.switchText}>
-          {isLogin
-            ? "Don't have an account? Sign Up"
-            : "Already have an account? Login"}
-        </Text>
-      </TouchableOpacity>
+          <Text style={styles.title}>{isLogin ? "Login" : "Sign Up"}</Text>
 
-      <SuccessPopup
-        visible={successPopupVisible}
-        onClose={() => setSuccessPopupVisible(false)}
-        message="Sign-up successful! You can now log in."
-      />
-    </View>
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            placeholderTextColor="#ccc"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+          />
+
+          {!isLogin && (
+            <TextInput
+              style={styles.input}
+              placeholder="User Name"
+              placeholderTextColor="#ccc"
+              value={username}
+              onChangeText={setUsername}
+            />
+          )}
+
+          {!isLogin && (
+            <TextInput
+              style={styles.input}
+              placeholder="Vehicle Model"
+              placeholderTextColor="#ccc"
+              value={vehicle}
+              onChangeText={setVehicle}
+            />
+          )}
+          {!isLogin && (
+            <TextInput
+              style={styles.input}
+              placeholder="Mobile Number"
+              placeholderTextColor="#ccc"
+              value={phoneNumber}
+              onChangeText={setPhoneNumber}
+            />
+          )}
+
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            placeholderTextColor="#ccc"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+          />
+
+          {!isLogin && (
+            <TextInput
+              style={styles.input}
+              placeholder="Confirm Password"
+              placeholderTextColor="#ccc"
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+              secureTextEntry
+            />
+          )}
+
+          {/* Navigate to DriverMenu on button click */}
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={isLogin ? handleLogin : handleSignUp}
+            style={styles.buttonWrapper}
+          >
+            <LinearGradient
+              colors={["#ff6f61", "#d72638"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.buttonGradient}
+            >
+              <Text style={styles.buttonText}>
+                {isLogin ? "Login" : "Sign Up"}
+              </Text>
+            </LinearGradient>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => setIsLogin(!isLogin)}>
+            <Text style={styles.switchText}>
+              {isLogin
+                ? "Don't have an account? Sign Up"
+                : "Already have an account? Login"}
+            </Text>
+          </TouchableOpacity>
+
+          <SuccessPopup
+            visible={successPopupVisible}
+            onClose={() => setSuccessPopupVisible(false)}
+            message="Account Created Successfully!!"
+          />
+
+          <SuccessPopup
+            visible={errorPopupVisible}
+            onClose={() => setErrorPopupVisible(false)}
+            icon={unsuccess}
+            message="Account Creation Failed!!"
+          />
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </LinearGradient>
   );
 };
 
@@ -170,22 +214,47 @@ export default DriverLoginAndSignUp;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  innerContainer: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f8f9fa",
+    paddingHorizontal: 20,
   },
+  logo: {
+    width: 250,
+    height: 150,
+  },
+
   title: {
-    fontSize: 24,
+    fontSize: 28,
+    color: "#fff",
     fontWeight: "bold",
-    marginBottom: 20,
+    marginBottom: 15,
+    textAlign: "center",
+    fontFamily: "Poppins-Bold",
+  },
+  scrollContent: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   input: {
     width: 300,
-    padding: 10,
-    margin: 10,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    marginVertical: 5,
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    color: "#fff",
+    borderRadius: 30,
     borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 5,
+    borderColor: "#fff",
+    fontSize: 16,
+    fontFamily: "Poppins-Regular",
+  },
+  buttonWrapper: {
+    width: "50%",
+    marginTop: 20,
   },
   button: {
     width: 200,
@@ -195,13 +264,28 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 10,
   },
+  buttonGradient: {
+    paddingVertical: 15,
+    borderRadius: 30,
+    borderWidth: 2,
+    borderColor: "#FFFFFF",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8.3,
+    elevation: 13,
+  },
   buttonText: {
     color: "white",
     fontSize: 18,
-    fontWeight: "bold",
+    fontFamily: "Poppins-Bold",
+    textAlign: "center",
   },
   switchText: {
     marginTop: 20,
-    color: "#007bff",
+    color: "#ffffff",
+    fontSize: 14,
+    textDecorationLine: "underline",
+    fontFamily: "Poppins-Regular",
   },
 });
