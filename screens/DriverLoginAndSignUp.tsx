@@ -39,6 +39,15 @@ const DriverLoginAndSignUp = () => {
 
   const navigation = useNavigation<DriverLoginNavProp>();
 
+  const resetFields = () => {
+    setEmail("");
+    setPassword("");
+    setConfirmPassword("");
+    setPhoneNumber("");
+    setUsername("");
+    setVehicle("");
+  };
+
   const handleSignUp = async () => {
     if (password !== confirmPassword) {
       Alert.alert("Error", "Passwords do not match");
@@ -56,6 +65,8 @@ const DriverLoginAndSignUp = () => {
         }
       );
       setSuccessPopupVisible(true);
+      resetFields();
+      setIsLogin(true);
     } catch (error: any) {
       setErrorPopupVisible(true);
     }
@@ -183,7 +194,12 @@ const DriverLoginAndSignUp = () => {
             </LinearGradient>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => setIsLogin(!isLogin)}>
+          <TouchableOpacity
+            onPress={() => {
+              setIsLogin(!isLogin);
+              resetFields();
+            }}
+          >
             <Text style={styles.switchText}>
               {isLogin
                 ? "Don't have an account? Sign Up"
@@ -193,7 +209,11 @@ const DriverLoginAndSignUp = () => {
 
           <SuccessPopup
             visible={successPopupVisible}
-            onClose={() => setSuccessPopupVisible(false)}
+            onClose={() => {
+              setSuccessPopupVisible(false);
+              resetFields();
+              setIsLogin(true);
+            }}
             message="Account Created Successfully!!"
           />
 

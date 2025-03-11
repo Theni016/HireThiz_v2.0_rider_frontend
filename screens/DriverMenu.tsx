@@ -1,19 +1,29 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+  Dimensions,
+  Image,
+  ScrollView,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { LinearGradient } from "expo-linear-gradient";
+import { RootStackParamList } from "../screens/types";
+import ProfileIcon from "../assets/images/profile.png";
+import CreateTripIcon from "../assets/images/create_trip.png";
+import EditTripIcon from "../assets/images/edit_trip.png";
+import RankboardIcon from "../assets/images/rankboard.png";
+import ChatIcon from "../assets/images/chatbot.png";
+import LogoutIcon from "../assets/images/logout.png";
 
-type RootStackParamList = {
-  GetStarted: undefined;
-  DriverProfile: undefined;
-  DriverRankboard: undefined;
-  ThizzyScreen: undefined;
-  DriverCreateTrip: undefined;
-  DriverEditTrip: undefined;
-};
+const { width } = Dimensions.get("window");
+const TILE_SIZE = (width - 60) / 2;
 
-// Define the type for useNavigation
 type GetStartedNavProp = NativeStackNavigationProp<
   RootStackParamList,
   "GetStarted"
@@ -22,65 +32,136 @@ type GetStartedNavProp = NativeStackNavigationProp<
 const DriverMenu = () => {
   const navigation = useNavigation<GetStartedNavProp>();
 
-  // Handle logout
   const handleLogout = async () => {
     try {
-      await AsyncStorage.removeItem("token"); 
-      navigation.navigate("GetStarted"); 
+      await AsyncStorage.removeItem("token");
+      navigation.navigate("GetStarted");
     } catch (error) {
       Alert.alert("Error", "Failed to log out. Please try again.");
     }
   };
 
   return (
-    <View style={styles.container}>
+    <LinearGradient colors={["#000428", "#004e92"]} style={styles.container}>
+      <Image
+        source={require("../assets/images/dark_bg_rider.png")}
+        style={styles.logo}
+        resizeMode="contain"
+      />
       <Text style={styles.title}>Driver Menu</Text>
 
-      {/* Button to Create New Trip */}
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate("DriverCreateTrip")}
-      >
-        <Text style={styles.buttonText}>Create New Trip</Text>
-      </TouchableOpacity>
+      <ScrollView contentContainerStyle={styles.tilesWrapper}>
+        {/* Create Trip */}
+        <TouchableOpacity
+          activeOpacity={0.85}
+          style={styles.tileWrapper}
+          onPress={() => navigation.navigate("DriverCreateTrip")}
+        >
+          <LinearGradient
+            colors={["#4facfe", "#00f2fe"]} // New blue gradient
+            style={styles.tile}
+          >
+            <Image
+              source={CreateTripIcon}
+              style={styles.icon}
+              resizeMode="contain"
+            />
+            <Text style={styles.tileText}>Create Trip</Text>
+          </LinearGradient>
+        </TouchableOpacity>
 
-      {/* Button to Edit existing Trip */}
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate("DriverEditTrip")}
-      >
-        <Text style={styles.buttonText}>Edit Existing Trip</Text>
-      </TouchableOpacity>
+        {/* Edit Trip */}
+        <TouchableOpacity
+          activeOpacity={0.85}
+          style={styles.tileWrapper}
+          onPress={() => navigation.navigate("DriverEditTrip")}
+        >
+          <LinearGradient
+            colors={["#43e97b", "#38f9d7"]} // New green gradient
+            style={styles.tile}
+          >
+            <Image
+              source={EditTripIcon}
+              style={styles.icon}
+              resizeMode="contain"
+            />
+            <Text style={styles.tileText}>Edit Trip</Text>
+          </LinearGradient>
+        </TouchableOpacity>
 
-      {/* Button to View profile */}
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate("DriverProfile")}
-      >
-        <Text style={styles.buttonText}>View Profile</Text>
-      </TouchableOpacity>
+        {/* View Profile */}
+        <TouchableOpacity
+          activeOpacity={0.85}
+          style={styles.tileWrapper}
+          onPress={() => navigation.navigate("DriverProfile")}
+        >
+          <LinearGradient
+            colors={["#fa709a", "#fee140"]} // Pink-yellow gradient
+            style={styles.tile}
+          >
+            <Image
+              source={ProfileIcon}
+              style={styles.icon}
+              resizeMode="contain"
+            />{" "}
+            <Text style={styles.tileText}>View Profile</Text>
+          </LinearGradient>
+        </TouchableOpacity>
 
-      {/* Button to View rankboard*/}
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate("DriverRankboard")}
-      >
-        <Text style={styles.buttonText}>View Rankboard</Text>
-      </TouchableOpacity>
+        {/* Rankboard */}
+        <TouchableOpacity
+          activeOpacity={0.85}
+          style={styles.tileWrapper}
+          onPress={() => navigation.navigate("DriverRankboard")}
+        >
+          <LinearGradient
+            colors={["#a18cd1", "#fbc2eb"]} // Purple-pink gradient
+            style={styles.tile}
+          >
+            <Image
+              source={RankboardIcon}
+              style={styles.icon}
+              resizeMode="contain"
+            />
+            <Text style={styles.tileText}>Rankboard</Text>
+          </LinearGradient>
+        </TouchableOpacity>
 
-      {/* Button to chat with Thizzy*/}
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate("ThizzyScreen")}
-      >
-        <Text style={styles.buttonText}>Chat with Thizzy</Text>
-      </TouchableOpacity>
+        {/* Chat with Thizzy */}
+        <TouchableOpacity
+          activeOpacity={0.85}
+          style={styles.tileWrapper}
+          onPress={() => navigation.navigate("ThizzyScreen")}
+        >
+          <LinearGradient
+            colors={["#fddb92", "#d1fdff"]} // Light yellow-blue gradient
+            style={styles.tile}
+          >
+            <Image source={ChatIcon} style={styles.icon} resizeMode="contain" />
+            <Text style={styles.tileText}>Chat with Thizzy</Text>
+          </LinearGradient>
+        </TouchableOpacity>
 
-      {/* Button to Logout*/}
-      <TouchableOpacity style={styles.dangerbutton} onPress={handleLogout}>
-        <Text style={styles.buttonText}>Log Out</Text>
-      </TouchableOpacity>
-    </View>
+        {/* Logout Tile (Danger Button Style) */}
+        <TouchableOpacity
+          activeOpacity={0.85}
+          style={styles.tileWrapper}
+          onPress={handleLogout}
+        >
+          <LinearGradient
+            colors={["#ff6f61", "#d72638"]} // Danger red gradient
+            style={styles.tile}
+          >
+            <Image
+              source={LogoutIcon}
+              style={styles.icon}
+              resizeMode="contain"
+            />
+            <Text style={styles.tileText}>Log Out</Text>
+          </LinearGradient>
+        </TouchableOpacity>
+      </ScrollView>
+    </LinearGradient>
   );
 };
 
@@ -89,34 +170,54 @@ export default DriverMenu;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#f8f9fa",
+    paddingTop: 80,
+    paddingHorizontal: 20,
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: "bold",
+    color: "#ffffff",
+    textAlign: "center",
     marginBottom: 30,
+    fontFamily: "Poppins-Bold",
   },
-  button: {
-    width: 250,
-    padding: 15,
-    margin: 10,
-    backgroundColor: "#007bff",
+  tilesWrapper: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    paddingBottom: 20,
+  },
+  tileWrapper: {
+    marginBottom: 20,
+  },
+  tile: {
+    width: TILE_SIZE,
+    height: TILE_SIZE,
+    borderRadius: 20,
+    justifyContent: "center",
     alignItems: "center",
-    borderRadius: 10,
+    padding: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4.65,
+    elevation: 8,
   },
-  dangerbutton: {
-    width: 250,
-    padding: 15,
-    margin: 10,
-    backgroundColor: "#dc3545",
-    alignItems: "center",
-    borderRadius: 10,
+  icon: {
+    width: 60, // Adjust size based on your needs
+    height: 60,
+    marginBottom: 10,
   },
-  buttonText: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
+  tileText: {
+    color: "#fff",
+    fontSize: 16,
+    textAlign: "center",
+    fontFamily: "Poppins-Bold",
+  },
+  logo: {
+    width: 250, 
+    height: 150, 
+    alignSelf: "center", 
+    marginBottom: 30,
   },
 });
