@@ -103,7 +103,7 @@ const DriverMenu = () => {
               source={ProfileIcon}
               style={styles.icon}
               resizeMode="contain"
-            />{" "}
+            />
             <Text style={styles.tileText}>View Profile</Text>
           </LinearGradient>
         </TouchableOpacity>

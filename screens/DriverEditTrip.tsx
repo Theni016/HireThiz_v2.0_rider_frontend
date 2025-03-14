@@ -1,9 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ScrollView, StyleSheet, Alert } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  Alert,
+  ActivityIndicator,
+  SafeAreaView,
+} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import TripCard from "@/components/TripCard";
-
+import { LinearGradient } from "expo-linear-gradient";
 type Location = {
   latitude: number;
   longitude: number;
@@ -48,10 +56,7 @@ const DriverEditTrip = () => {
           }
         );
 
-        const formattedTrips = response.data.map((trip: any) => ({
-          ...trip,
-        }));
-        setTrips(formattedTrips);
+        setTrips(response.data);
       } catch (error) {
         console.error("Fetch trips error:", error);
         Alert.alert("Error", "Failed to load trips");
@@ -63,45 +68,70 @@ const DriverEditTrip = () => {
     fetchDriverTrips();
   }, []);
 
+  const handleEditTrip = (tripId: number) => {
+    // Navigate to edit trip screen or show modal
+    Alert.alert("Edit Trip", `Trip ID: ${tripId}`);
+  };
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Edit Existing Trips</Text>
-      {loading ? (
-        <Text style={styles.loadingText}>Loading trips...</Text>
-      ) : trips.length > 0 ? (
-        <ScrollView>
-          {trips.map((trip) => (
-            <TripCard key={trip.id} trip={trip} />
-          ))}
-        </ScrollView>
-      ) : (
-        <Text style={styles.noTripsText}>No trips found</Text>
-      )}
-    </View>
+    <LinearGradient
+      colors={["#000428", "#004e92"]}
+      style={styles.gradientBackground}
+    >
+      <SafeAreaView style={styles.safeArea}>
+        <Text style={styles.title}>Your Created Trips</Text>
+
+        {loading ? (
+          <ActivityIndicator
+            size="large"
+            color="#ffffff"
+            style={styles.loader}
+          />
+        ) : trips.length > 0 ? (
+          <ScrollView contentContainerStyle={styles.scrollContainer}>
+            {trips.map((trip) => (
+              <TripCard
+                key={trip.id}
+                trip={trip}
+                onEdit={() => handleEditTrip(trip.id)}
+              />
+            ))}
+          </ScrollView>
+        ) : (
+          <Text style={styles.noTripsText}>No trips found.</Text>
+        )}
+      </SafeAreaView>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  gradientBackground: {
+    flex: 1,
+  },
+  safeArea: {
     flex: 1,
     padding: 16,
-    backgroundColor: "#fff",
   },
   title: {
-    fontSize: 20,
+    fontSize: 28,
     fontWeight: "bold",
-    marginBottom: 10,
-  },
-  loadingText: {
-    fontSize: 16,
+    color: "#ffffff",
+    marginBottom: 20,
     textAlign: "center",
-    marginTop: 20,
+    marginTop: 20, // Give it room from top
+  },
+  loader: {
+    marginTop: 40,
+  },
+  scrollContainer: {
+    paddingBottom: 20,
   },
   noTripsText: {
-    fontSize: 16,
+    fontSize: 18,
     textAlign: "center",
-    marginTop: 20,
-    color: "gray",
+    marginTop: 40,
+    color: "#ffffff",
   },
 });
 

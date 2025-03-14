@@ -7,7 +7,9 @@ import {
   StyleSheet,
   ActivityIndicator,
   Alert,
+  TextInput,
 } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import MapView, { Marker, MapPressEvent } from "react-native-maps";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import axios from "axios";
@@ -82,6 +84,7 @@ const LocationPicker: React.FC<Props> = ({
         <TouchableOpacity onPress={onClose} style={styles.closeButton}>
           <Text style={styles.closeButtonText}>Close</Text>
         </TouchableOpacity>
+
         <GooglePlacesAutocomplete
           placeholder="Search for a location"
           onPress={(data, details = null) => {
@@ -99,8 +102,17 @@ const LocationPicker: React.FC<Props> = ({
           }}
           fetchDetails
           styles={{
-            container: { width: "100%" },
-            textInput: { padding: 10, borderWidth: 1, borderRadius: 5 },
+            container: { width: "100%", marginBottom: 10 },
+            textInput: {
+              padding: 10,
+              borderWidth: 1,
+              borderRadius: 30,
+              marginBottom: 10,
+              backgroundColor: "#ffffff20",
+              color: "#fff",
+              fontFamily: "Poppins-Regular",
+              borderColor: "#ffffff30",
+            },
           }}
         />
 
@@ -133,6 +145,16 @@ const LocationPicker: React.FC<Props> = ({
           />
         )}
 
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Selected location"
+            placeholderTextColor="#ccc"
+            value={selectedLocation?.address || ""}
+            editable={false} // Make it non-editable as this will only display the selected address
+          />
+        </View>
+
         <View style={styles.buttonContainer}>
           {/* Cancel Button */}
           <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
@@ -152,7 +174,12 @@ const LocationPicker: React.FC<Props> = ({
             }}
             disabled={loading}
           >
-            <Text style={styles.submitButtonText}>Confirm Location</Text>
+            <LinearGradient
+              colors={["#ff6f61", "#d72638"]}
+              style={styles.submitButtonGradient}
+            >
+              <Text style={styles.submitButtonText}>Confirm Location</Text>
+            </LinearGradient>
           </TouchableOpacity>
         </View>
       </View>
@@ -161,17 +188,54 @@ const LocationPicker: React.FC<Props> = ({
 };
 
 const styles = StyleSheet.create({
-  modalContainer: { flex: 1, padding: 20, backgroundColor: "white" },
-  buttonContainer: { flexDirection: "row", justifyContent: "space-between" },
-  closeButton: { position: "absolute", top: 10, right: 10, padding: 10 },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    padding: 20,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 20,
+  },
+  closeButton: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    padding: 10,
+  },
   closeButtonText: { color: "red", fontSize: 16 },
-  map: { flex: 1, marginVertical: 10 },
+  map: { width: "100%", height: "50%", marginVertical: 10 },
+  inputContainer: { width: "100%", marginVertical: 10 },
+  input: {
+    padding: 10,
+    backgroundColor: "#ffffff20",
+    borderRadius: 30,
+    color: "#fff",
+    fontFamily: "Poppins-Regular",
+    borderWidth: 1,
+    borderColor: "#ffffff30",
+    marginBottom: 10,
+  },
   submitButton: {
-    backgroundColor: "#007bff",
-    padding: 15,
-    borderRadius: 8,
     flex: 1,
     margin: 5,
+    borderRadius: 30,
+    padding: 15,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  submitButtonGradient: {
+    borderRadius: 30,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  submitButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontFamily: "Poppins-Bold",
   },
   cancelButton: {
     backgroundColor: "#d9534f",
@@ -181,8 +245,6 @@ const styles = StyleSheet.create({
     margin: 5,
   },
   cancelButtonText: { color: "white", textAlign: "center", fontSize: 16 },
-
-  submitButtonText: { color: "white", textAlign: "center", fontSize: 16 },
 });
 
 export default LocationPicker;

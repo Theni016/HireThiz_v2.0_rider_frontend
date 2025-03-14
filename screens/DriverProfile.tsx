@@ -1,7 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+  SafeAreaView,
+  Image,
+} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
+import { LinearGradient } from "expo-linear-gradient";
 
 const DriverProfile = () => {
   const navigation = useNavigation();
@@ -19,79 +28,147 @@ const DriverProfile = () => {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Driver Profile</Text>
+    <LinearGradient
+      colors={["#000428", "#004e92"]}
+      style={styles.gradientContainer}
+    >
+      <SafeAreaView style={{ flex: 1 }}>
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <Text style={styles.title}>Driver Profile</Text>
 
-      {/* ✅ Space for Profile Picture */}
-      <View style={styles.profilePicturePlaceholder}>
-        <Text style={styles.profilePictureText}>Profile Picture</Text>
-      </View>
+          <View style={styles.profilePicturePlaceholder}>
+            <Image
+              source={require("../assets/images/profilepic.png")}
+              style={styles.logo}
+              resizeMode="contain"
+            />
+          </View>
 
-      {/* ✅ Display Logged-in User Details */}
-      {user ? (
-        <>
-          <Text style={styles.infoText}>👤 Name: {user.username}</Text>
-          <Text style={styles.infoText}>📧 Email: {user.email}</Text>
-          <Text style={styles.infoText}>📞 Phone: {user.phoneNumber}</Text>
-          <Text style={styles.infoText}>🚖 Vehicle: {user.vehicle}</Text>
-        </>
-      ) : (
-        <Text style={styles.infoText}>Loading user data...</Text>
-      )}
+          {user ? (
+            <>
+              <View style={styles.infoCard}>
+                <Text style={styles.infoLabel}>👤 Name</Text>
+                <Text style={styles.infoText}>{user.username}</Text>
+              </View>
 
-      {/* ✅ Button to go back to Menu */}
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.goBack()}
-      >
-        <Text style={styles.buttonText}>Back to Menu</Text>
-      </TouchableOpacity>
-    </View>
+              <View style={styles.infoCard}>
+                <Text style={styles.infoLabel}>📧 Email</Text>
+                <Text style={styles.infoText}>{user.email}</Text>
+              </View>
+
+              <View style={styles.infoCard}>
+                <Text style={styles.infoLabel}>📞 Phone</Text>
+                <Text style={styles.infoText}>{user.phoneNumber}</Text>
+              </View>
+
+              <View style={styles.infoCard}>
+                <Text style={styles.infoLabel}>🚖 Vehicle</Text>
+                <Text style={styles.infoText}>{user.vehicle}</Text>
+              </View>
+            </>
+          ) : (
+            <Text style={[styles.infoText, { color: "#fff" }]}>
+              Loading user data...
+            </Text>
+          )}
+
+          <TouchableOpacity
+            style={styles.buttonContainer}
+            onPress={() => navigation.goBack()}
+          >
+            <LinearGradient
+              colors={["#ff6f61", "#d72638"]}
+              style={styles.buttonGradient}
+            >
+              <Text style={styles.buttonText}>Back to Menu</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        </ScrollView>
+      </SafeAreaView>
+    </LinearGradient>
   );
 };
 
 export default DriverProfile;
 
 const styles = StyleSheet.create({
-  container: {
+  gradientContainer: {
     flex: 1,
-    justifyContent: "center",
+  },
+  scrollContainer: {
+    paddingHorizontal: 20,
+    paddingBottom: 20,
     alignItems: "center",
-    backgroundColor: "#f8f9fa",
+    paddingTop: 40, // ✅ Add top padding to push everything down
   },
   title: {
-    fontSize: 26,
+    fontSize: 28,
     fontWeight: "bold",
+    color: "#fff",
     marginBottom: 20,
+    fontFamily: "Poppins-Bold",
+    // marginTop: 20, // ✅ Optional: use margin if not using SafeAreaView or paddingTop
   },
   profilePicturePlaceholder: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
+    width: 140,
+    height: 140,
+    borderRadius: 70,
     backgroundColor: "#ddd",
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: 30,
   },
   profilePictureText: {
     color: "#555",
-    fontSize: 14,
+    fontSize: 16,
+    fontFamily: "Poppins-Regular",
+  },
+  infoCard: {
+    backgroundColor: "#ffffff20",
+    padding: 15,
+    width: "100%",
+    borderRadius: 20,
+    marginBottom: 15,
+    borderWidth: 1,
+    borderColor: "#ffffff30",
+  },
+  infoLabel: {
+    fontSize: 16,
+    color: "#ffffffaa",
+    marginBottom: 5,
+    fontFamily: "Poppins-Regular",
   },
   infoText: {
     fontSize: 18,
-    marginBottom: 10,
+    color: "#fff",
+    fontWeight: "bold",
+    fontFamily: "Poppins-Bold",
   },
-  button: {
-    width: 200,
-    padding: 15,
+  buttonContainer: {
+    width: "100%",
     marginTop: 20,
-    backgroundColor: "#007bff",
+    borderRadius: 30,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 5,
+  },
+  buttonGradient: {
+    paddingVertical: 15,
+    paddingHorizontal: 25,
+    borderRadius: 30,
     alignItems: "center",
-    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#fff",
   },
   buttonText: {
-    color: "white",
+    color: "#fff",
     fontSize: 18,
-    fontWeight: "bold",
+    fontFamily: "Poppins-Bold",
+  },
+  logo: {
+    width: 250,
+    height: 150,
   },
 });

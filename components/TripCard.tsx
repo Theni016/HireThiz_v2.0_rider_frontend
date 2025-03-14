@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 
 type Trip = {
   id: number;
@@ -24,9 +25,10 @@ type Trip = {
 
 interface TripCardProps {
   trip: Trip;
+  onEdit?: () => void;
 }
 
-const TripCard: React.FC<TripCardProps> = ({ trip }) => {
+const TripCard: React.FC<TripCardProps> = ({ trip, onEdit }) => {
   const extractDistrict = (address: string): string => {
     if (!address) return "";
 
@@ -61,22 +63,48 @@ const TripCard: React.FC<TripCardProps> = ({ trip }) => {
   const formattedDate = formatDate(trip.date);
 
   return (
-    <View style={styles.card}>
-      <Text style={styles.tripTitle}>
-        {startDistrict} → {destinationDistrict}
-      </Text>
-      <Text style={styles.details}>
-        Seats: {trip.seatsAvailable} | Price: Rs. {trip.pricePerSeat}
-      </Text>
-      <Text style={styles.details}>Date: {formattedDate}</Text>
-      <Text style={styles.description}>{trip.description}</Text>
-      <Text style={styles.driver}>
-        Driver: {trip.driverName} | Vehicle: {trip.vehicle} | ⭐ {trip.rating}
-      </Text>
+    <View style={styles.cardWrapper}>
+      <LinearGradient colors={["#000428", "#004e92"]} style={styles.card}>
+        <Text style={styles.tripTitle}>
+          {startDistrict} → {destinationDistrict}
+        </Text>
 
-      <TouchableOpacity style={styles.editButton}>
-        <Text style={styles.buttonText}>Edit</Text>
-      </TouchableOpacity>
+        <View style={styles.infoRow}>
+          <Text style={styles.label}>Seats:</Text>
+          <Text style={styles.value}>{trip.seatsAvailable}</Text>
+        </View>
+
+        <View style={styles.infoRow}>
+          <Text style={styles.label}>Price/Seat:</Text>
+          <Text style={styles.value}>Rs. {trip.pricePerSeat}</Text>
+        </View>
+
+        <View style={styles.infoRow}>
+          <Text style={styles.label}>Date:</Text>
+          <Text style={styles.value}>{formattedDate}</Text>
+        </View>
+
+        <Text style={styles.description}>{trip.description}</Text>
+
+        <View style={styles.divider} />
+
+        <Text style={styles.driver}>
+          Driver: {trip.driverName} | {trip.vehicle} | ⭐ {trip.rating}
+        </Text>
+
+        <TouchableOpacity
+          style={styles.editButton}
+          onPress={onEdit}
+          activeOpacity={0.8}
+        >
+          <LinearGradient
+            colors={["#ff6f61", "#d72638"]}
+            style={styles.buttonGradient}
+          >
+            <Text style={styles.buttonText}>Edit Trip</Text>
+          </LinearGradient>
+        </TouchableOpacity>
+      </LinearGradient>
     </View>
   );
 };
@@ -84,44 +112,65 @@ const TripCard: React.FC<TripCardProps> = ({ trip }) => {
 export default TripCard;
 
 const styles = StyleSheet.create({
+  cardWrapper: {
+    marginBottom: 20,
+  },
   card: {
-    backgroundColor: "white",
-    padding: 15,
-    marginBottom: 15,
-    borderRadius: 10,
+    borderRadius: 20,
+    padding: 20,
     shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    elevation: 5,
   },
   tripTitle: {
-    fontSize: 18,
+    fontSize: 22,
+    color: "#ffffff",
     fontWeight: "bold",
+    marginBottom: 10,
   },
-  details: {
-    fontSize: 14,
-    color: "#555",
+  infoRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginVertical: 4,
+  },
+  label: {
+    color: "#ffffff",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  value: {
+    color: "#ffffff",
+    fontSize: 16,
   },
   description: {
-    marginTop: 5,
+    marginTop: 10,
     fontSize: 14,
-    color: "#777",
+    color: "#d3d3d3",
+    lineHeight: 20,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: "#ffffff50",
+    marginVertical: 15,
   },
   driver: {
-    marginTop: 5,
     fontSize: 14,
-    color: "#333",
-    fontWeight: "bold",
+    color: "#ffffff",
+    fontWeight: "600",
   },
   editButton: {
-    marginTop: 10,
-    backgroundColor: "#28a745",
-    padding: 10,
-    borderRadius: 5,
+    marginTop: 15,
+    borderRadius: 30,
+    overflow: "hidden",
+  },
+  buttonGradient: {
+    paddingVertical: 12,
     alignItems: "center",
+    borderRadius: 30,
   },
   buttonText: {
-    color: "white",
+    color: "#ffffff",
     fontSize: 16,
     fontWeight: "bold",
   },

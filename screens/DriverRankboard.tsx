@@ -5,10 +5,11 @@ import {
   TouchableOpacity,
   StyleSheet,
   FlatList,
+  SafeAreaView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { LinearGradient } from "expo-linear-gradient";
 
-// Hardcoded Rankboard Data
 const rankboardData = [
   {
     id: "1",
@@ -44,95 +45,156 @@ const DriverRankboard = () => {
   const navigation = useNavigation();
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Driver Rankboard</Text>
+    <LinearGradient
+      colors={["#000428", "#004e92"]}
+      style={styles.gradientContainer}
+    >
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.headerContainer}>
+          <Text style={styles.title}>Driver Rankboard</Text>
+        </View>
 
-      {/* Rankboard Table */}
-      <View style={styles.tableHeader}>
-        <Text style={styles.headerText}>Driver</Text>
-        <Text style={styles.headerText}>Vehicle</Text>
-        <Text style={styles.headerText}>Trips</Text>
-        <Text style={styles.headerText}>Stars</Text>
-      </View>
+        <FlatList
+          data={rankboardData}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item, index }) => (
+            <View style={styles.rankCard}>
+              <View style={styles.rankBadge}>
+                <Text style={styles.rankBadgeText}>#{index + 1}</Text>
+              </View>
+              <View style={styles.cardContent}>
+                <Text style={styles.driverName}>{item.driver}</Text>
+                <Text style={styles.vehicle}>{item.vehicle}</Text>
+                <View style={styles.statsContainer}>
+                  <Text style={styles.stat}>Trips: {item.trips}</Text>
+                  <Text style={styles.stat}>Stars: {item.stars}</Text>
+                </View>
+              </View>
+            </View>
+          )}
+          contentContainerStyle={styles.listContent}
+          showsVerticalScrollIndicator={false}
+        />
 
-      <FlatList
-        data={rankboardData}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.tableRow}>
-            <Text style={styles.rowText}>{item.driver}</Text>
-            <Text style={styles.rowText}>{item.vehicle}</Text>
-            <Text style={styles.rowText}>{item.trips}</Text>
-            <Text style={styles.rowText}>{item.stars}</Text>
-          </View>
-        )}
-      />
-
-      {/* Back Button */}
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.goBack()}
-      >
-        <Text style={styles.buttonText}>Back to Menu</Text>
-      </TouchableOpacity>
-    </View>
+        <TouchableOpacity
+          style={styles.buttonContainer}
+          onPress={() => navigation.goBack()}
+        >
+          <LinearGradient
+            colors={["#ff6f61", "#d72638"]}
+            style={styles.buttonGradient}
+          >
+            <Text style={styles.buttonText}>Back to Menu</Text>
+          </LinearGradient>
+        </TouchableOpacity>
+      </SafeAreaView>
+    </LinearGradient>
   );
 };
 
 export default DriverRankboard;
 
 const styles = StyleSheet.create({
-  container: {
+  gradientContainer: {
     flex: 1,
-    padding: 20,
-    backgroundColor: "#f8f9fa",
+  },
+  safeArea: {
+    flex: 1,
+    paddingHorizontal: 20,
+  },
+  headerContainer: {
+    marginTop: 40,
+    marginBottom: 20,
     alignItems: "center",
   },
   title: {
-    fontSize: 26,
+    fontSize: 28,
     fontWeight: "bold",
-    marginBottom: 20,
+    color: "#fff",
+    fontFamily: "Poppins-Bold",
   },
-  tableHeader: {
+  listContent: {
+    paddingBottom: 20,
+  },
+  rankCard: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-    paddingVertical: 10,
-    backgroundColor: "#007bff",
-    borderRadius: 5,
-    marginBottom: 10,
-  },
-  headerText: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "white",
-    flex: 1,
-    textAlign: "center",
-  },
-  tableRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-  },
-  rowText: {
-    fontSize: 16,
-    flex: 1,
-    textAlign: "center",
-  },
-  button: {
-    marginTop: 20,
-    padding: 15,
-    backgroundColor: "#007bff",
-    borderRadius: 10,
-    width: "80%",
     alignItems: "center",
+    backgroundColor: "#ffffff20",
+    borderRadius: 20,
+    padding: 15,
+    marginBottom: 15,
+    width: "100%",
+    borderWidth: 1,
+    borderColor: "#ffffff30",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 5,
   },
-  buttonText: {
-    color: "white",
+  rankBadge: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: "#ff6f61",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  rankBadgeText: {
+    color: "#fff",
     fontSize: 18,
     fontWeight: "bold",
+    fontFamily: "Poppins-Bold",
+  },
+  cardContent: {
+    flex: 1,
+  },
+  driverName: {
+    fontSize: 20,
+    color: "#fff",
+    fontFamily: "Poppins-Bold",
+    marginBottom: 5,
+  },
+  vehicle: {
+    fontSize: 16,
+    color: "#ffffffaa",
+    fontFamily: "Poppins-Regular",
+    marginBottom: 10,
+  },
+  statsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  stat: {
+    fontSize: 16,
+    color: "#fff",
+    fontFamily: "Poppins-Regular",
+  },
+  buttonContainer: {
+    marginTop: 20,
+    marginBottom: 30,
+    borderRadius: 30,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 5,
+  },
+  buttonGradient: {
+    paddingVertical: 15,
+    borderRadius: 30,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#fff",
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontFamily: "Poppins-Bold",
   },
 });
