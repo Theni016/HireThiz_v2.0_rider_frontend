@@ -64,7 +64,7 @@ const TripCard: React.FC<TripCardProps> = ({ trip, onEdit }) => {
 
   return (
     <View style={styles.cardWrapper}>
-      <LinearGradient colors={["#000428", "#004e92"]} style={styles.card}>
+      <LinearGradient colors={["#062530", "#062530"]} style={styles.card}>
         <Text style={styles.tripTitle}>
           {startDistrict} → {destinationDistrict}
         </Text>

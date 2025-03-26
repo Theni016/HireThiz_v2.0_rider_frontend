@@ -48,7 +48,7 @@ const DriverEditTrip = () => {
         const driverId = tokenPayload.id;
 
         const response = await axios.get(
-          `http://192.168.8.140:5000/api/trips/driver/${driverId}`,
+          `http://192.168.8.140:3000/api/trips/driver/${driverId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

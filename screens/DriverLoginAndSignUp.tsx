@@ -55,7 +55,7 @@ const DriverLoginAndSignUp = () => {
     }
     try {
       const response = await axios.post(
-        "http://192.168.8.140:5000/api/driver/signup",
+        "http://192.168.8.140:3000/api/driver/signup",
         {
           email,
           password,
@@ -75,7 +75,7 @@ const DriverLoginAndSignUp = () => {
   const handleLogin = async () => {
     try {
       const response = await axios.post(
-        "http://192.168.8.140:5000/api/driver/login",
+        "http://192.168.8.140:3000/api/driver/login",
         {
           email,
           password,
@@ -86,7 +86,7 @@ const DriverLoginAndSignUp = () => {
 
       // Fetch user details after login
       const profileResponse = await axios.get(
-        "http://192.168.8.140:5000/api/driver/profile",
+        "http://192.168.8.140:3000/api/driver/profile",
         {
           headers: { Authorization: response.data.token },
         }

@@ -36,22 +36,21 @@ const LocationPicker: React.FC<Props> = ({
   );
   const [loading, setLoading] = useState(false);
 
-  // 🟢 Reverse geocoding function using Google API
   const fetchAddressFromCoords = async (
     latitude: number,
     longitude: number
   ) => {
     try {
-      setLoading(true); // Start loading
+      setLoading(true);
       const apiKey = "AIzaSyD6STY62xhctE62ldoy8H9s7SzcAxDo8d8";
       const response = await axios.get(
         `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`
       );
 
       if (response.data.status === "OK") {
-        const address =
-          response.data.results[0]?.formatted_address || "Unknown location";
-        return address;
+        return (
+          response.data.results[0]?.formatted_address || "Unknown location"
+        );
       } else {
         console.error("Reverse Geocoding failed:", response.data);
         Alert.alert("Error", "Failed to fetch address from location.");
@@ -62,13 +61,12 @@ const LocationPicker: React.FC<Props> = ({
       Alert.alert("Error", "Could not fetch address.");
       return "Unknown location";
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false);
     }
   };
 
   const handleSelectLocation = async (event: MapPressEvent) => {
     const { latitude, longitude } = event.nativeEvent.coordinate;
-
     const address = await fetchAddressFromCoords(latitude, longitude);
 
     setSelectedLocation({
@@ -79,108 +77,107 @@ const LocationPicker: React.FC<Props> = ({
   };
 
   return (
-    <Modal visible={visible} animationType="slide" transparent>
-      <View style={styles.modalContainer}>
-        <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-          <Text style={styles.closeButtonText}>Close</Text>
-        </TouchableOpacity>
+    <Modal visible={visible} animationType="fade" transparent>
+      <View style={styles.overlay}>
+        <View style={styles.popup}>
+          <Text style={styles.title}>Select a Location</Text>
 
-        <GooglePlacesAutocomplete
-          placeholder="Search for a location"
-          onPress={(data, details = null) => {
-            if (details) {
-              setSelectedLocation({
-                latitude: details.geometry.location.lat,
-                longitude: details.geometry.location.lng,
-                address: data.description,
-              });
-            }
-          }}
-          query={{
-            key: "AIzaSyD6STY62xhctE62ldoy8H9s7SzcAxDo8d8",
-            language: "en",
-          }}
-          fetchDetails
-          styles={{
-            container: { width: "100%", marginBottom: 10 },
-            textInput: {
-              padding: 10,
-              borderWidth: 1,
-              borderRadius: 30,
-              marginBottom: 10,
-              backgroundColor: "#ffffff20",
-              color: "#fff",
-              fontFamily: "Poppins-Regular",
-              borderColor: "#ffffff30",
-            },
-          }}
-        />
-
-        <MapView
-          style={styles.map}
-          onPress={handleSelectLocation}
-          initialRegion={{
-            latitude: 6.9271,
-            longitude: 79.8612,
-            latitudeDelta: 0.05,
-            longitudeDelta: 0.05,
-          }}
-        >
-          {selectedLocation && (
-            <Marker
-              coordinate={{
-                latitude: selectedLocation.latitude,
-                longitude: selectedLocation.longitude,
-              }}
-              title={selectedLocation.address}
-            />
-          )}
-        </MapView>
-
-        {loading && (
-          <ActivityIndicator
-            style={{ marginBottom: 10 }}
-            size="large"
-            color="#007bff"
-          />
-        )}
-
-        <View style={styles.inputContainer}>
           <TextInput
             style={styles.input}
             placeholder="Selected location"
             placeholderTextColor="#ccc"
             value={selectedLocation?.address || ""}
-            editable={false} // Make it non-editable as this will only display the selected address
+            editable={false}
           />
-        </View>
 
-        <View style={styles.buttonContainer}>
-          {/* Cancel Button */}
-          <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-            <Text style={styles.cancelButtonText}>Cancel</Text>
-          </TouchableOpacity>
-
-          {/* Confirm Button */}
-          <TouchableOpacity
-            style={styles.submitButton}
-            onPress={() => {
-              if (selectedLocation) {
-                onSelectLocation(selectedLocation);
-                onClose(); // ✅ Close modal after selection
-              } else {
-                alert("Please select a location.");
+          {/* <GooglePlacesAutocomplete
+            placeholder="Search for a location"
+            onPress={(data, details = null) => {
+              if (details) {
+                setSelectedLocation({
+                  latitude: details.geometry.location.lat,
+                  longitude: details.geometry.location.lng,
+                  address: data.description,
+                });
               }
             }}
-            disabled={loading}
+            query={{
+              key: "AIzaSyD6STY62xhctE62ldoy8H9s7SzcAxDo8d8",
+              language: "en",
+            }}
+            fetchDetails
+            styles={{
+              textInput: {
+                backgroundColor: "#000428",
+                color: "#fff",
+                fontFamily: "Poppins-Regular",
+              },
+            }}
+          /> */}
+
+          <MapView
+            style={styles.map}
+            onPress={handleSelectLocation}
+            initialRegion={{
+              latitude: 6.9271,
+              longitude: 79.8612,
+              latitudeDelta: 0.05,
+              longitudeDelta: 0.05,
+            }}
           >
-            <LinearGradient
-              colors={["#ff6f61", "#d72638"]}
-              style={styles.submitButtonGradient}
+            {selectedLocation && (
+              <Marker
+                coordinate={{
+                  latitude: selectedLocation.latitude,
+                  longitude: selectedLocation.longitude,
+                }}
+                title={selectedLocation.address}
+              />
+            )}
+          </MapView>
+
+          {loading && (
+            <ActivityIndicator
+              size="large"
+              color="#007bff"
+              style={{ marginVertical: 10 }}
+            />
+          )}
+
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => {
+                if (selectedLocation) {
+                  onSelectLocation(selectedLocation);
+                  onClose();
+                } else {
+                  alert("Please select a location.");
+                }
+              }}
+              disabled={loading}
+              style={styles.buttonWrapper}
             >
-              <Text style={styles.submitButtonText}>Confirm Location</Text>
-            </LinearGradient>
-          </TouchableOpacity>
+              <LinearGradient
+                colors={["#ff6f61", "#d72638"]}
+                style={styles.buttonGradient}
+              >
+                <Text style={styles.buttonText}>Confirm</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={onClose}
+              style={styles.buttonWrapper}
+            >
+              <LinearGradient
+                colors={["#ff6f61", "#d72638"]}
+                style={styles.buttonGradient}
+              >
+                <Text style={styles.buttonText}>Cancel</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </Modal>
@@ -188,63 +185,78 @@ const LocationPicker: React.FC<Props> = ({
 };
 
 const styles = StyleSheet.create({
-  modalContainer: {
+  overlay: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  popup: {
+    width: 350,
     padding: 20,
+    backgroundColor: "#000428",
+    borderRadius: 20,
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: "#fff",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8.3,
+    elevation: 13,
   },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 20,
+  title: {
+    fontSize: 20,
+    color: "#ffffff",
+    marginBottom: 10,
+    fontFamily: "Poppins-Bold",
   },
-  closeButton: {
-    position: "absolute",
-    top: 10,
-    right: 10,
-    padding: 10,
+  map: {
+    width: "100%",
+    height: 430,
+    borderRadius: 15,
+    marginVertical: 10,
   },
-  closeButtonText: { color: "red", fontSize: 16 },
-  map: { width: "100%", height: "50%", marginVertical: 10 },
-  inputContainer: { width: "100%", marginVertical: 10 },
   input: {
-    padding: 10,
+    width: "100%",
+    padding: 12,
     backgroundColor: "#ffffff20",
     borderRadius: 30,
     color: "#fff",
     fontFamily: "Poppins-Regular",
     borderWidth: 1,
     borderColor: "#ffffff30",
-    marginBottom: 10,
+    textAlign: "center",
+    marginBottom: 15,
   },
-  submitButton: {
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+    marginTop: 15,
+  },
+  buttonWrapper: {
     flex: 1,
-    margin: 5,
+    marginHorizontal: 5,
+  },
+  buttonGradient: {
+    paddingVertical: 12,
     borderRadius: 30,
-    padding: 15,
-    justifyContent: "center",
+    borderWidth: 2,
+    borderColor: "#FFFFFF",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8.3,
+    elevation: 13,
     alignItems: "center",
   },
-  submitButtonGradient: {
-    borderRadius: 30,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  submitButtonText: {
+  buttonText: {
     color: "#fff",
     fontSize: 16,
     fontFamily: "Poppins-Bold",
+    textAlign: "center",
   },
-  cancelButton: {
-    backgroundColor: "#d9534f",
-    padding: 15,
-    borderRadius: 8,
-    flex: 1,
-    margin: 5,
-  },
-  cancelButtonText: { color: "white", textAlign: "center", fontSize: 16 },
 });
 
 export default LocationPicker;

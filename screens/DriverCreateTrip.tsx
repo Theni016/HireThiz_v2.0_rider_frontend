@@ -131,7 +131,7 @@ const CreateTrip = () => {
 
       console.log("Sending trip data:", tripData);
 
-      await axios.post("http://192.168.8.140:5000/api/createTrip", tripData, {
+      await axios.post("http://192.168.8.140:3000/api/createTrip", tripData, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
