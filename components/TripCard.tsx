@@ -5,6 +5,7 @@ import { Picker } from "@react-native-picker/picker";
 import ConfirmPopup from "./ConfirmPopup";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type Trip = {
   _id: string;
@@ -76,15 +77,24 @@ const TripCard: React.FC<TripCardProps> = ({ trip }) => {
 
   const handleStatusConfirm = async () => {
     try {
-      await axios.put(`http://192.168.8.140:3000/trips/${trip._id}/status`, {
-        status: pendingStatus,
-      });
-      setSelectedStatus(pendingStatus as any);
-    } catch (error) {
-      console.error("Failed to update status:", error);
-      Alert.alert("Error", "Failed to update trip status.");
-    } finally {
+      const token = await AsyncStorage.getItem("token");
+      await axios.put(
+        `http://192.168.8.140:3000/api/trips/${trip._id}/status`,
+        { status: pendingStatus },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       setShowConfirmation(false);
+      if (pendingStatus) {
+        setSelectedStatus(pendingStatus);
+      }
+      Alert.alert("Success", `Trip status updated to ${pendingStatus}`);
+    } catch (err) {
+      console.error("Failed to update status", err);
+      Alert.alert("Error", "Could not update trip status");
     }
   };
 
