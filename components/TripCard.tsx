@@ -1,5 +1,12 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import React, { useState, useRef, useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+  Animated,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Picker } from "@react-native-picker/picker";
 import ConfirmPopup from "./ConfirmPopup";
@@ -35,6 +42,9 @@ interface TripCardProps {
 }
 
 const TripCard: React.FC<TripCardProps> = ({ trip }) => {
+  const [showTooltip, setShowTooltip] = useState(false);
+  const tooltipOpacity = useRef(new Animated.Value(0)).current;
+
   const [selectedStatus, setSelectedStatus] = useState<
     "Available" | "On Progress" | "Completed" | "Cancelled"
   >(trip.status || "Available");
@@ -45,6 +55,23 @@ const TripCard: React.FC<TripCardProps> = ({ trip }) => {
   >("");
 
   const navigation = useNavigation<any>();
+
+  const toggleTooltip = () => {
+    if (showTooltip) {
+      Animated.timing(tooltipOpacity, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }).start(() => setShowTooltip(false));
+    } else {
+      setShowTooltip(true);
+      Animated.timing(tooltipOpacity, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+    }
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -167,12 +194,38 @@ const TripCard: React.FC<TripCardProps> = ({ trip }) => {
             style={styles.gradientButton}
           >
             <TouchableOpacity
-              onPress={() => console.log("Message Booked Passengers")}
+              onPress={toggleTooltip}
               style={styles.innerButton}
             >
-              <Text style={styles.buttonText}>Message Booked Passengers</Text>
+              <Text style={styles.buttonText}>More Info</Text>
             </TouchableOpacity>
           </LinearGradient>
+          {showTooltip && (
+            <Animated.View
+              style={[styles.tooltipContainer, { opacity: tooltipOpacity }]}
+            >
+              <TouchableOpacity
+                style={styles.tooltipButton}
+                onPress={() => {
+                  setShowTooltip(false);
+                  console.log("View Bookings Pressed");
+                  // Navigate to View Bookings screen if needed
+                }}
+              >
+                <Text style={styles.tooltipText}>View Bookings</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.tooltipButton}
+                onPress={() => {
+                  setShowTooltip(false);
+                  console.log("Send Announcements Pressed");
+                  // Navigate to Send Announcements screen if needed
+                }}
+              >
+                <Text style={styles.tooltipText}>Send Announcements</Text>
+              </TouchableOpacity>
+            </Animated.View>
+          )}
 
           <LinearGradient
             colors={
@@ -287,5 +340,31 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "bold",
     fontFamily: "Poppins-Bold",
+  },
+  tooltipContainer: {
+    position: "absolute",
+    top: -40,
+    left: 140,
+    zIndex: 10,
+    backgroundColor: "rgba(30, 30, 30, 0.95)",
+    padding: 10,
+    borderRadius: 10,
+    borderColor: "#444",
+    borderWidth: 1,
+    width: 200,
+    shadowColor: "#000",
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 6,
+  },
+
+  tooltipButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+  },
+  tooltipText: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "600",
   },
 });
