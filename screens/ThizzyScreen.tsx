@@ -46,18 +46,21 @@ const ThizzyScreen = () => {
       const response = await axios.post(
         "http://192.168.8.140:5005/webhooks/rest/webhook",
         {
-          sender: "user",
+          sender: "rider",
           message: input,
         }
       );
 
       if (response.data.length > 0) {
-        const botMessage: Message = {
-          id: (Date.now() + 1).toString(),
-          text: response.data[0].text,
-          sender: "bot",
-        };
-        setMessages((prev) => [...prev, botMessage]);
+        const botMessages: Message[] = response.data.map(
+          (res: any, index: number) => ({
+            id: `${Date.now() + index}`,
+            text: res.text,
+            sender: "bot",
+          })
+        );
+
+        setMessages((prev) => [...prev, ...botMessages]);
       }
     } catch (error) {
       console.error("Chatbot error:", error);
@@ -114,7 +117,7 @@ const ThizzyScreen = () => {
         <Text style={styles.title}>Chat with Thizzy</Text>
 
         <FlatList
-          data={messages.reverse()}
+          data={messages.slice().reverse()}
           keyExtractor={(item) => item.id}
           renderItem={renderMessage}
           contentContainerStyle={styles.chatContainer}
@@ -129,7 +132,7 @@ const ThizzyScreen = () => {
               iterationCount="infinite"
               duration={1000}
               easing="linear"
-              source={require("../assets/images/loading.png")} // 👈 Replace with your cogwheel icon
+              source={require("../assets/images/loading.png")}
               style={styles.loadingIcon}
             />
             <Text style={styles.loadingText}>Processing...</Text>
@@ -237,7 +240,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 30,
     marginRight: 10,
-    marginBottom:30
+    marginBottom: 30,
   },
   loadingContainer: {
     flexDirection: "row",
@@ -296,6 +299,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderWidth: 1,
     borderColor: "#fff",
+    marginBottom: 20,
   },
   backButtonText: {
     color: "#fff",

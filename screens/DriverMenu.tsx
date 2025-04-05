@@ -85,7 +85,7 @@ const DriverMenu = () => {
               style={styles.icon}
               resizeMode="contain"
             />
-            <Text style={styles.tileText}>Edit Trip</Text>
+            <Text style={styles.tileText}>My Trips</Text>
           </LinearGradient>
         </TouchableOpacity>
 
@@ -148,10 +148,7 @@ const DriverMenu = () => {
           style={styles.tileWrapper}
           onPress={handleLogout}
         >
-          <LinearGradient
-            colors={["#ff6f61", "#d72638"]} // Danger red gradient
-            style={styles.tile}
-          >
+          <LinearGradient colors={["#ff6f61", "#d72638"]} style={styles.tile}>
             <Image
               source={LogoutIcon}
               style={styles.icon}
@@ -215,9 +212,9 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Bold",
   },
   logo: {
-    width: 250, 
-    height: 150, 
-    alignSelf: "center", 
+    width: 250,
+    height: 150,
+    alignSelf: "center",
     marginBottom: 30,
   },
 });
