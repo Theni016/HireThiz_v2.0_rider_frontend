@@ -19,7 +19,7 @@ type Location = {
 };
 
 type Trip = {
-  id: number;
+  _id: string;
   startLocation: Location;
   destination: Location;
   seatsAvailable: number;
@@ -29,6 +29,7 @@ type Trip = {
   driverName: string;
   vehicle: string;
   rating: number;
+  status?: "Available" | "On Progress" | "Completed" | "Cancelled";
 };
 
 const DriverEditTrip = () => {
@@ -68,11 +69,6 @@ const DriverEditTrip = () => {
     fetchDriverTrips();
   }, []);
 
-  const handleEditTrip = (tripId: number) => {
-    // Navigate to edit trip screen or show modal
-    Alert.alert("Edit Trip", `Trip ID: ${tripId}`);
-  };
-
   return (
     <LinearGradient
       colors={["#000428", "#004e92"]}
@@ -90,11 +86,7 @@ const DriverEditTrip = () => {
         ) : trips.length > 0 ? (
           <ScrollView contentContainerStyle={styles.scrollContainer}>
             {trips.map((trip) => (
-              <TripCard
-                key={trip.id}
-                trip={trip}
-                onEdit={() => handleEditTrip(trip.id)}
-              />
+              <TripCard key={trip._id} trip={trip} />
             ))}
           </ScrollView>
         ) : (

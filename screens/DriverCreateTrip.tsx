@@ -18,7 +18,6 @@ import { LinearGradient } from "expo-linear-gradient"; // Import LinearGradient
 import tripsuccess from "../assets/images/car_success.png";
 import triperror from "../assets/images/car_error.png";
 
-
 // Define types for trip details
 type Location = {
   latitude: number;
@@ -136,11 +135,9 @@ const CreateTrip = () => {
       });
 
       setCreationSuccessPopupVisible(true);
-      
     } catch (error) {
       console.error("Trip creation error:", error);
       setCreationFailurePopupVisible(true);
-      
     }
   };
 

@@ -1,9 +1,13 @@
-import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import React, { useState } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import { Picker } from "@react-native-picker/picker";
+import ConfirmPopup from "./ConfirmPopup";
+import { useNavigation } from "@react-navigation/native";
+import axios from "axios";
 
 type Trip = {
-  id: number;
+  _id: string;
   startLocation: {
     latitude: number;
     longitude: number;
@@ -21,6 +25,7 @@ type Trip = {
   driverName: string;
   vehicle: string;
   rating: number;
+  status?: "Available" | "On Progress" | "Completed" | "Cancelled";
 };
 
 interface TripCardProps {
@@ -28,45 +33,69 @@ interface TripCardProps {
   onEdit?: () => void;
 }
 
-const TripCard: React.FC<TripCardProps> = ({ trip, onEdit }) => {
-  const extractDistrict = (address: string): string => {
-    if (!address) return "";
+const TripCard: React.FC<TripCardProps> = ({ trip }) => {
+  const [selectedStatus, setSelectedStatus] = useState<
+    "Available" | "On Progress" | "Completed" | "Cancelled"
+  >(trip.status || "Available");
 
-    const parts = address.split(",").map((part) => part.trim());
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [pendingStatus, setPendingStatus] = useState<
+    "Available" | "On Progress" | "Completed" | "Cancelled" | ""
+  >("");
 
-    if (parts.length >= 3) {
-      return parts[parts.length - 2];
+  const navigation = useNavigation<any>();
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "On Progress":
+        return "#FFA500";
+      case "Completed":
+        return "#32CD32";
+      case "Cancelled":
+        return "#FF4747";
+      case "Available":
+        return "#1E90FF";
+      default:
+        return "#ccc";
     }
-    if (parts.length >= 2) {
-      return parts[1];
-    }
-    return parts[0];
   };
 
-  const startDistrict = extractDistrict(trip.startLocation.address);
-  const destinationDistrict = extractDistrict(trip.destination.address);
+  const extractDistrict = (address: string): string => {
+    const parts = address.split(",").map((part) => part.trim());
+    return parts[parts.length - 2] || parts[0];
+  };
 
   const formatDate = (dateString: string): string => {
-    if (!dateString) return "";
-
     const date = new Date(dateString);
-
-    const options: Intl.DateTimeFormatOptions = {
+    return date.toLocaleDateString(undefined, {
       year: "numeric",
       month: "long",
       day: "numeric",
-    };
-
-    return date.toLocaleDateString(undefined, options);
+    });
   };
 
-  const formattedDate = formatDate(trip.date);
+  const handleStatusConfirm = async () => {
+    try {
+      await axios.put(`http://192.168.8.140:3000/trips/${trip._id}/status`, {
+        status: pendingStatus,
+      });
+      setSelectedStatus(pendingStatus as any);
+    } catch (error) {
+      console.error("Failed to update status:", error);
+      Alert.alert("Error", "Failed to update trip status.");
+    } finally {
+      setShowConfirmation(false);
+    }
+  };
+
+  const effectiveStatus = pendingStatus || selectedStatus;
 
   return (
     <View style={styles.cardWrapper}>
-      <LinearGradient colors={["#062530", "#062530"]} style={styles.card}>
+      <LinearGradient colors={["#000428", "#004e92"]} style={styles.card}>
         <Text style={styles.tripTitle}>
-          {startDistrict} → {destinationDistrict}
+          {extractDistrict(trip.startLocation.address)} →{" "}
+          {extractDistrict(trip.destination.address)}
         </Text>
 
         <View style={styles.infoRow}>
@@ -81,10 +110,40 @@ const TripCard: React.FC<TripCardProps> = ({ trip, onEdit }) => {
 
         <View style={styles.infoRow}>
           <Text style={styles.label}>Date:</Text>
-          <Text style={styles.value}>{formattedDate}</Text>
+          <Text style={styles.value}>{formatDate(trip.date)}</Text>
         </View>
 
         <Text style={styles.description}>{trip.description}</Text>
+
+        <View
+          style={{
+            backgroundColor: getStatusColor(effectiveStatus),
+            borderRadius: 8,
+            marginVertical: 10,
+            overflow: "hidden",
+          }}
+        >
+          <Picker
+            selectedValue={effectiveStatus}
+            onValueChange={(itemValue: any) => {
+              if (itemValue !== selectedStatus) {
+                setPendingStatus(itemValue);
+                setShowConfirmation(true);
+              }
+            }}
+            style={{
+              color: "#fff",
+              backgroundColor: getStatusColor(effectiveStatus),
+              fontWeight: "bold",
+            }}
+            dropdownIconColor="#fff"
+          >
+            <Picker.Item label="Available" value="Available" />
+            <Picker.Item label="On Progress" value="On Progress" />
+            <Picker.Item label="Completed" value="Completed" />
+            <Picker.Item label="Cancelled" value="Cancelled" />
+          </Picker>
+        </View>
 
         <View style={styles.divider} />
 
@@ -92,24 +151,64 @@ const TripCard: React.FC<TripCardProps> = ({ trip, onEdit }) => {
           Driver: {trip.driverName} | {trip.vehicle} | ⭐ {trip.rating}
         </Text>
 
-        <TouchableOpacity
-          style={styles.editButton}
-          onPress={onEdit}
-          activeOpacity={0.8}
-        >
+        <View style={styles.buttonRow}>
           <LinearGradient
             colors={["#ff6f61", "#d72638"]}
-            style={styles.buttonGradient}
+            style={styles.gradientButton}
           >
-            <Text style={styles.buttonText}>Edit Trip</Text>
+            <TouchableOpacity
+              onPress={() => console.log("Message Booked Passengers")}
+              style={styles.innerButton}
+            >
+              <Text style={styles.buttonText}>Message Booked Passengers</Text>
+            </TouchableOpacity>
           </LinearGradient>
-        </TouchableOpacity>
+
+          <LinearGradient
+            colors={
+              effectiveStatus === "On Progress"
+                ? ["#4CAF50", "#388E3C"]
+                : ["#888", "#666"]
+            }
+            style={styles.gradientButton}
+          >
+            <TouchableOpacity
+              disabled={effectiveStatus !== "On Progress"}
+              onPress={() =>
+                navigation.navigate("NavigationScreen", {
+                  startLocation: trip.startLocation,
+                  destination: trip.destination,
+                })
+              }
+              style={styles.innerButton}
+            >
+              <Text style={styles.buttonText}>View Navigation</Text>
+            </TouchableOpacity>
+          </LinearGradient>
+        </View>
       </LinearGradient>
+
+      <ConfirmPopup
+        visible={showConfirmation}
+        onConfirm={handleStatusConfirm}
+        onCancel={() => setShowConfirmation(false)}
+        message={`Are you sure you want to mark this trip as "${pendingStatus}"?`}
+        icon={require("../assets/images/favicon.png")}
+      />
+      {showConfirmation && (
+        <View style={{ marginTop: 10, alignItems: "center" }}>
+          <TouchableOpacity onPress={handleStatusConfirm}>
+            <Text style={{ color: "white", fontSize: 16 }}>Yes</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 };
 
 export default TripCard;
+
+// ...styles remain unchanged
 
 const styles = StyleSheet.create({
   cardWrapper: {
@@ -159,19 +258,24 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     fontWeight: "600",
   },
-  editButton: {
+  buttonRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginTop: 15,
-    borderRadius: 30,
-    overflow: "hidden",
   },
-  buttonGradient: {
+  gradientButton: {
+    borderRadius: 30,
+    width: "48%",
+  },
+  innerButton: {
     paddingVertical: 12,
     alignItems: "center",
     borderRadius: 30,
   },
   buttonText: {
-    color: "#ffffff",
-    fontSize: 16,
+    color: "#fff",
+    fontSize: 14,
     fontWeight: "bold",
+    fontFamily: "Poppins-Bold",
   },
 });

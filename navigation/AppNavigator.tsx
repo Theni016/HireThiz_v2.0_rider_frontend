@@ -10,6 +10,7 @@ import DriverRankboard from "@/screens/DriverRankboard";
 import ThizzyScreen from "@/screens/ThizzyScreen";
 import DriverCreateTrip from "@/screens/DriverCreateTrip";
 import DriverEditTrip from "@/screens/DriverEditTrip";
+import NavigationScreen from "../screens/NavigationScreen";
 import { RootStackParamList } from "@/screens/types";
 
 // Define stack navigator
@@ -52,6 +53,7 @@ const AppNavigator = () => {
       <Stack.Screen name="ThizzyScreen" component={ThizzyScreen} />
       <Stack.Screen name="DriverCreateTrip" component={DriverCreateTrip} />
       <Stack.Screen name="DriverEditTrip" component={DriverEditTrip} />
+      <Stack.Screen name="NavigationScreen" component={NavigationScreen} />
     </Stack.Navigator>
   );
 };
