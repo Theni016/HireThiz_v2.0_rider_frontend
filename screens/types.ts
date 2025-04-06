@@ -7,5 +7,6 @@ export type RootStackParamList = {
   ThizzyScreen: undefined;
   DriverCreateTrip: undefined;
   DriverEditTrip: undefined;
-  NavigationScreen:undefined;
+  NavigationScreen: undefined;
+  DriverViewBookings: undefined;
 };

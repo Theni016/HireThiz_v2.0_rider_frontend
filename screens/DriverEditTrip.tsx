@@ -29,7 +29,7 @@ type Trip = {
   driverName: string;
   vehicle: string;
   rating: number;
-  status?: "Available" | "On Progress" | "Completed" | "Cancelled";
+  status?: "Available" | "In Progress" | "Completed" | "Cancelled";
 };
 
 const DriverEditTrip = () => {

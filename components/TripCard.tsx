@@ -33,7 +33,7 @@ type Trip = {
   driverName: string;
   vehicle: string;
   rating: number;
-  status?: "Available" | "On Progress" | "Completed" | "Cancelled";
+  status?: "Available" | "In Progress" | "Completed" | "Cancelled";
 };
 
 interface TripCardProps {
@@ -46,12 +46,12 @@ const TripCard: React.FC<TripCardProps> = ({ trip }) => {
   const tooltipOpacity = useRef(new Animated.Value(0)).current;
 
   const [selectedStatus, setSelectedStatus] = useState<
-    "Available" | "On Progress" | "Completed" | "Cancelled"
+    "Available" | "In Progress" | "Completed" | "Cancelled"
   >(trip.status || "Available");
 
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [pendingStatus, setPendingStatus] = useState<
-    "Available" | "On Progress" | "Completed" | "Cancelled" | ""
+    "Available" | "In Progress" | "Completed" | "Cancelled" | ""
   >("");
 
   const navigation = useNavigation<any>();
@@ -75,7 +75,7 @@ const TripCard: React.FC<TripCardProps> = ({ trip }) => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "On Progress":
+      case "In Progress":
         return "#FFA500";
       case "Completed":
         return "#32CD32";
@@ -176,7 +176,7 @@ const TripCard: React.FC<TripCardProps> = ({ trip }) => {
             dropdownIconColor="#fff"
           >
             <Picker.Item label="Available" value="Available" />
-            <Picker.Item label="On Progress" value="On Progress" />
+            <Picker.Item label="In Progress" value="In Progress" />
             <Picker.Item label="Completed" value="Completed" />
             <Picker.Item label="Cancelled" value="Cancelled" />
           </Picker>
@@ -208,8 +208,9 @@ const TripCard: React.FC<TripCardProps> = ({ trip }) => {
                 style={styles.tooltipButton}
                 onPress={() => {
                   setShowTooltip(false);
-                  console.log("View Bookings Pressed");
-                  // Navigate to View Bookings screen if needed
+                  navigation.navigate("DriverViewBookings", {
+                    tripId: trip._id,
+                  });
                 }}
               >
                 <Text style={styles.tooltipText}>View Bookings</Text>
@@ -229,14 +230,14 @@ const TripCard: React.FC<TripCardProps> = ({ trip }) => {
 
           <LinearGradient
             colors={
-              effectiveStatus === "On Progress"
+              effectiveStatus === "In Progress"
                 ? ["#4CAF50", "#388E3C"]
                 : ["#888", "#666"]
             }
             style={styles.gradientButton}
           >
             <TouchableOpacity
-              disabled={effectiveStatus !== "On Progress"}
+              disabled={effectiveStatus !== "In Progress"}
               onPress={() =>
                 navigation.navigate("NavigationScreen", {
                   startLocation: trip.startLocation,
@@ -270,8 +271,6 @@ const TripCard: React.FC<TripCardProps> = ({ trip }) => {
 };
 
 export default TripCard;
-
-// ...styles remain unchanged
 
 const styles = StyleSheet.create({
   cardWrapper: {
