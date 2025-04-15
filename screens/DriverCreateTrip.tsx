@@ -153,86 +153,95 @@ const CreateTrip = () => {
 
   return (
     <LinearGradient colors={["#000428", "#004e92"]} style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={styles.formContainer}>
-          <Text style={styles.title}>Create a New Trip</Text>
+      <View style={styles.formContainer}>
+        <Text style={styles.title}>Create a New Trip</Text>
 
-          {/* Start Location Selection */}
-          <TouchableOpacity
-            style={styles.locationButton}
-            onPress={() => openLocationPicker("start")}
+        {/* Start Location Selection */}
+        <TouchableOpacity
+          style={styles.input}
+          onPress={() => openLocationPicker("start")}
+        >
+          <Text>
+            {startLocation ? startLocation.address : "Select Start Location"}
+          </Text>
+        </TouchableOpacity>
+
+        {/* Destination Selection */}
+        <TouchableOpacity
+          style={styles.input}
+          onPress={() => openLocationPicker("destination")}
+        >
+          <Text>
+            {destination ? destination.address : "Select Destination"}
+          </Text>
+        </TouchableOpacity>
+
+        <LocationPicker
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+          onSelectLocation={handleLocationSelect}
+        />
+
+        <TextInput
+          style={styles.input}
+          placeholder="Seats Available"
+          keyboardType="numeric"
+          value={tripDetails.seatsAvailable}
+          onChangeText={(text) => handleInputChange("seatsAvailable", text)}
+          placeholderTextColor="#999"
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Price Per Seat"
+          keyboardType="numeric"
+          value={tripDetails.pricePerSeat}
+          onChangeText={(text) => handleInputChange("pricePerSeat", text)}
+          placeholderTextColor="#999"
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Date (YYYY-MM-DD)"
+          value={tripDetails.date}
+          onChangeText={(text) => handleInputChange("date", text)}
+          placeholderTextColor="#999"
+        />
+        <TextInput
+          style={[styles.input, { height: 100 }]}
+          placeholder="Description"
+          value={tripDetails.description}
+          onChangeText={(text) => handleInputChange("description", text)}
+          multiline
+          placeholderTextColor="#999"
+        />
+
+        <TouchableOpacity
+          style={styles.buttonContainer}
+          onPress={handleCreateTrip}
+        >
+          <LinearGradient
+            colors={["#ff6f61", "#d72638"]}
+            style={styles.buttonGradient}
           >
-            <Text style={styles.locationText}>
-              {startLocation ? startLocation.address : "Select Start Location"}
-            </Text>
-          </TouchableOpacity>
-
-          {/* Destination Selection */}
-          <TouchableOpacity
-            style={styles.locationButton}
-            onPress={() => openLocationPicker("destination")}
-          >
-            <Text style={styles.locationText}>
-              {destination ? destination.address : "Select Destination"}
-            </Text>
-          </TouchableOpacity>
-
-          {/* Location Picker Modal */}
-          <LocationPicker
-            visible={modalVisible}
-            onClose={() => setModalVisible(false)}
-            onSelectLocation={handleLocationSelect}
-          />
-
-          <TextInput
-            style={styles.input}
-            placeholder="Seats Available"
-            keyboardType="numeric"
-            value={tripDetails.seatsAvailable}
-            onChangeText={(text) => handleInputChange("seatsAvailable", text)}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Price Per Seat"
-            keyboardType="numeric"
-            value={tripDetails.pricePerSeat}
-            onChangeText={(text) => handleInputChange("pricePerSeat", text)}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Date (YYYY-MM-DD)"
-            value={tripDetails.date}
-            onChangeText={(text) => handleInputChange("date", text)}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Description"
-            value={tripDetails.description}
-            onChangeText={(text) => handleInputChange("description", text)}
-            multiline
-          />
-
-          <TouchableOpacity style={styles.button} onPress={handleCreateTrip}>
             <Text style={styles.buttonText}>Create Trip</Text>
-          </TouchableOpacity>
+          </LinearGradient>
+        </TouchableOpacity>
 
-          {/* Success Popup */}
-          <SuccessPopup
-            visible={creationSuccessPopupVisible}
-            icon={tripsuccess}
-            onClose={handleSuccessClosePopup}
-            message="Trip Listed Successfully!!"
-          />
+        {/* Success Popup */}
+        <SuccessPopup
+          visible={creationSuccessPopupVisible}
+          icon={tripsuccess}
+          onClose={handleSuccessClosePopup}
+          message="Trip Listed Successfully!!"
+        />
 
-          {/* Failure Popup */}
-          <SuccessPopup
-            visible={creationFailurePopupVisible}
-            icon={triperror}
-            onClose={handleFailureClosePopup}
-            message="Trip Listing Error!!"
-          />
-        </View>
-      </ScrollView>
+        {/* Failure Popup */}
+        <SuccessPopup
+          visible={creationFailurePopupVisible}
+          icon={triperror}
+          onClose={handleFailureClosePopup}
+          message="Trip Listing Error!!"
+        />
+      </View>
     </LinearGradient>
   );
 };
@@ -241,24 +250,25 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    justifyContent: "center",
   },
   scrollContainer: {
     flexGrow: 1,
     justifyContent: "center",
-    paddingBottom: 30,
   },
   formContainer: {
-    backgroundColor: "#ffffff",
-    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: "#fff",
+    backgroundColor: "rgba(0,0,0,0.5)",
+    borderRadius: 20,
     padding: 20,
-    elevation: 5,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 5,
   },
   title: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: "bold",
     color: "#fff",
     marginBottom: 20,
@@ -270,9 +280,10 @@ const styles = StyleSheet.create({
     padding: 15,
     marginBottom: 15,
     borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 30,
-    backgroundColor: "#f5f5f5",
+    borderColor: "#ffffff30",
+    borderRadius: 20,
+    backgroundColor: "#ffffff",
+    color: "#333",
     fontFamily: "Poppins-Regular",
   },
   button: {
@@ -287,23 +298,39 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
   },
   buttonText: {
-    color: "white",
+    color: "#fff",
     fontSize: 18,
-    fontWeight: "bold",
-    textAlign: "center",
     fontFamily: "Poppins-Bold",
   },
   locationButton: {
     padding: 15,
-    backgroundColor: "#dcdcdc",
-    borderRadius: 10,
-    marginBottom: 10,
+    backgroundColor: "#ffffff",
+    borderRadius: 20,
+    marginBottom: 15,
+    borderWidth: 1,
+    borderColor: "#ffffff30",
   },
   locationText: {
     fontSize: 16,
     color: "#333",
     fontFamily: "Poppins-Regular",
     textAlign: "center",
+  },
+  buttonContainer: {
+    marginTop: 10,
+    borderRadius: 30,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  buttonGradient: {
+    paddingVertical: 15,
+    borderRadius: 30,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#fff",
   },
 });
 

@@ -23,7 +23,6 @@ import LogoutIcon from "../assets/images/logout.png";
 
 const { width } = Dimensions.get("window");
 const TILE_SIZE = (width - 60) / 2;
-
 type GetStartedNavProp = NativeStackNavigationProp<
   RootStackParamList,
   "GetStarted"
@@ -41,6 +40,17 @@ const DriverMenu = () => {
     }
   };
 
+  const renderTile = (icon: any, label: string, onPress: () => void) => (
+    <TouchableOpacity activeOpacity={0.85} onPress={onPress}>
+      <LinearGradient colors={["#ff6f61", "#d72638"]} style={styles.tileButton}>
+        <View style={styles.tileContent}>
+          <Image source={icon} style={styles.icon} resizeMode="contain" />
+          <Text style={styles.buttonText}>{label}</Text>
+        </View>
+      </LinearGradient>
+    </TouchableOpacity>
+  );
+
   return (
     <LinearGradient colors={["#000428", "#004e92"]} style={styles.container}>
       <Image
@@ -51,110 +61,36 @@ const DriverMenu = () => {
       <Text style={styles.title}>Driver Menu</Text>
 
       <ScrollView contentContainerStyle={styles.tilesWrapper}>
-        {/* Create Trip */}
-        <TouchableOpacity
-          activeOpacity={0.85}
-          style={styles.tileWrapper}
-          onPress={() => navigation.navigate("DriverCreateTrip")}
-        >
-          <LinearGradient
-            colors={["#4facfe", "#00f2fe"]} // New blue gradient
-            style={styles.tile}
-          >
-            <Image
-              source={CreateTripIcon}
-              style={styles.icon}
-              resizeMode="contain"
-            />
-            <Text style={styles.tileText}>Create Trip</Text>
-          </LinearGradient>
-        </TouchableOpacity>
+        {renderTile(CreateTripIcon, "Create Trip", () =>
+          navigation.navigate("DriverCreateTrip")
+        )}
+        {renderTile(EditTripIcon, "My Trips", () =>
+          navigation.navigate("DriverEditTrip")
+        )}
+        {renderTile(ProfileIcon, "View Profile", () =>
+          navigation.navigate("DriverProfile")
+        )}
+        {renderTile(RankboardIcon, "Rankboard", () =>
+          navigation.navigate("DriverRankboard")
+        )}
+        {renderTile(ChatIcon, "Chat with Thizzy", () =>
+          navigation.navigate("ThizzyScreen")
+        )}
 
-        {/* Edit Trip */}
-        <TouchableOpacity
-          activeOpacity={0.85}
-          style={styles.tileWrapper}
-          onPress={() => navigation.navigate("DriverEditTrip")}
-        >
+        {/* Logout Tile (Styled like 'Back to Menu') */}
+        <TouchableOpacity activeOpacity={0.85} onPress={handleLogout}>
           <LinearGradient
-            colors={["#43e97b", "#38f9d7"]} // New green gradient
-            style={styles.tile}
+            colors={["#b00020", "#8e0016"]} // deeper red gradient
+            style={[styles.tileButton]}
           >
-            <Image
-              source={EditTripIcon}
-              style={styles.icon}
-              resizeMode="contain"
-            />
-            <Text style={styles.tileText}>My Trips</Text>
-          </LinearGradient>
-        </TouchableOpacity>
-
-        {/* View Profile */}
-        <TouchableOpacity
-          activeOpacity={0.85}
-          style={styles.tileWrapper}
-          onPress={() => navigation.navigate("DriverProfile")}
-        >
-          <LinearGradient
-            colors={["#fa709a", "#fee140"]} // Pink-yellow gradient
-            style={styles.tile}
-          >
-            <Image
-              source={ProfileIcon}
-              style={styles.icon}
-              resizeMode="contain"
-            />
-            <Text style={styles.tileText}>View Profile</Text>
-          </LinearGradient>
-        </TouchableOpacity>
-
-        {/* Rankboard */}
-        <TouchableOpacity
-          activeOpacity={0.85}
-          style={styles.tileWrapper}
-          onPress={() => navigation.navigate("DriverRankboard")}
-        >
-          <LinearGradient
-            colors={["#a18cd1", "#fbc2eb"]} // Purple-pink gradient
-            style={styles.tile}
-          >
-            <Image
-              source={RankboardIcon}
-              style={styles.icon}
-              resizeMode="contain"
-            />
-            <Text style={styles.tileText}>Rankboard</Text>
-          </LinearGradient>
-        </TouchableOpacity>
-
-        {/* Chat with Thizzy */}
-        <TouchableOpacity
-          activeOpacity={0.85}
-          style={styles.tileWrapper}
-          onPress={() => navigation.navigate("ThizzyScreen")}
-        >
-          <LinearGradient
-            colors={["#fddb92", "#d1fdff"]} // Light yellow-blue gradient
-            style={styles.tile}
-          >
-            <Image source={ChatIcon} style={styles.icon} resizeMode="contain" />
-            <Text style={styles.tileText}>Chat with Thizzy</Text>
-          </LinearGradient>
-        </TouchableOpacity>
-
-        {/* Logout Tile (Danger Button Style) */}
-        <TouchableOpacity
-          activeOpacity={0.85}
-          style={styles.tileWrapper}
-          onPress={handleLogout}
-        >
-          <LinearGradient colors={["#ff6f61", "#d72638"]} style={styles.tile}>
-            <Image
-              source={LogoutIcon}
-              style={styles.icon}
-              resizeMode="contain"
-            />
-            <Text style={styles.tileText}>Log Out</Text>
+            <View style={styles.tileContent}>
+              <Image
+                source={LogoutIcon}
+                style={styles.icon}
+                resizeMode="contain"
+              />
+              <Text style={styles.buttonText}>Log Out</Text>
+            </View>
           </LinearGradient>
         </TouchableOpacity>
       </ScrollView>
@@ -182,34 +118,42 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
-    paddingBottom: 20,
+    paddingBottom: 30,
   },
-  tileWrapper: {
-    marginBottom: 20,
-  },
-  tile: {
+  tileButton: {
     width: TILE_SIZE,
     height: TILE_SIZE,
-    borderRadius: 20,
+    borderRadius: 30,
     justifyContent: "center",
     alignItems: "center",
-    padding: 10,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: "#fff",
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.3,
-    shadowRadius: 4.65,
-    elevation: 8,
+    shadowRadius: 10,
+    elevation: 5,
+  },
+  tileContent: {
+    justifyContent: "center",
+    alignItems: "center",
   },
   icon: {
-    width: 60, // Adjust size based on your needs
+    width: 60,
     height: 60,
     marginBottom: 10,
   },
-  tileText: {
+  buttonText: {
     color: "#fff",
     fontSize: 16,
-    textAlign: "center",
     fontFamily: "Poppins-Bold",
+    textAlign: "center",
+  },
+  logoutButton: {
+    backgroundColor: "#b00020",
+    borderWidth: 1,
+    borderColor: "#fff",
   },
   logo: {
     width: 250,

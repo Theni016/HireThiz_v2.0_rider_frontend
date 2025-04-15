@@ -128,8 +128,7 @@ const TripCard: React.FC<TripCardProps> = ({ trip }) => {
   const effectiveStatus = pendingStatus || selectedStatus;
 
   return (
-    <View style={styles.cardWrapper}>
-      <LinearGradient colors={["#000428", "#004e92"]} style={styles.card}>
+      <View style={styles.card}>
         <Text style={styles.tripTitle}>
           {extractDistrict(trip.startLocation.address)} →{" "}
           {extractDistrict(trip.destination.address)}
@@ -250,7 +249,6 @@ const TripCard: React.FC<TripCardProps> = ({ trip }) => {
             </TouchableOpacity>
           </LinearGradient>
         </View>
-      </LinearGradient>
 
       <ConfirmPopup
         visible={showConfirmation}
@@ -273,16 +271,19 @@ const TripCard: React.FC<TripCardProps> = ({ trip }) => {
 export default TripCard;
 
 const styles = StyleSheet.create({
-  cardWrapper: {
-    marginBottom: 20,
-  },
+  cardWrapper: {},
   card: {
+    marginBottom: 20,
     borderRadius: 20,
+    backgroundColor: "rgba(0,0,0,0.5)",
     padding: 20,
+    borderWidth: 2,
+    borderColor: "#fff",
     shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
-    elevation: 5,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8.3,
+    elevation: 13,
   },
   tripTitle: {
     fontSize: 22,

@@ -90,31 +90,6 @@ const LocationPicker: React.FC<Props> = ({
             editable={false}
           />
 
-          {/* <GooglePlacesAutocomplete
-            placeholder="Search for a location"
-            onPress={(data, details = null) => {
-              if (details) {
-                setSelectedLocation({
-                  latitude: details.geometry.location.lat,
-                  longitude: details.geometry.location.lng,
-                  address: data.description,
-                });
-              }
-            }}
-            query={{
-              key: "AIzaSyD6STY62xhctE62ldoy8H9s7SzcAxDo8d8",
-              language: "en",
-            }}
-            fetchDetails
-            styles={{
-              textInput: {
-                backgroundColor: "#000428",
-                color: "#fff",
-                fontFamily: "Poppins-Regular",
-              },
-            }}
-          /> */}
-
           <MapView
             style={styles.map}
             onPress={handleSelectLocation}
